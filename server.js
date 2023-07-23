@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 const { join_lobby } = require("./lobbies.js");
 const { disconnect } = require("process");
 config();
-const TIME=15;
+const TIME=50;
 const Lobbies = {"easy":[],"medium":[],"hard":[]};
 const Socket_list=new Map();
 const Running = new Map();
