@@ -9,6 +9,7 @@ config();
 const TIME=15;
 const Lobbies = {"easy":[],"medium":[],"hard":[]};
 const Socket_list=new Map();
+const username_list=new Map();
 const Running = new Map();
 const Private_lobbies=new Map();
 const app = express();
@@ -127,6 +128,7 @@ io.on("connection", function (socket) {
     const room_id = join_lobby(Lobbies, difficulty, socket);
     socket.join(room_id);
     Socket_list.set(socket.id,room_id);
+    username_list.set(socket_id,user);
     let x=0;
     for(let i=0;i<Lobbies[difficulty].length;i++){
       if(Lobbies[difficulty].lobbie_id===room_id){
@@ -158,21 +160,24 @@ function calculate_wpm(pos,accuracy,errors){
     console.log(Running.get(room_id));
     const res = {};
     let len=0;
+    const arr=[]
     for(let [key, value] of Running.get(room_id)){
       res[key] = value;
+      arr.push({"socket":key,"username":username_list.get(key)});
       if(res[key].over===true){
         res[key].speed=calculate_wpm(res[key].pos,res[key].accuracy,res[key].errors);
         len++;
       }
     }
+    
     console.log(len + " ---- "+ Running.get(room_id).size)
     if(len===Running.get(room_id).size){
-      io.sockets.in(room_id).emit("over",res);
+      io.sockets.in(room_id).emit("over",{data:res,userlist:arr});
       console.log("udaaa")
     }
     else{
     console.log(res);
-    io.sockets.in(room_id).emit("update", res);
+    io.sockets.in(room_id).emit("update", {data:res,userlist:arr});
     }
   })
   // socket.on("leave")
