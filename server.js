@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 const { join_lobby } = require("./lobbies.js");
 const { disconnect } = require("process");
 config();
-const TIME=15;
+const TIME=50;
 const Lobbies = {"easy":[],"medium":[],"hard":[]};
 const Socket_list=new Map();
 const username_list=new Map();
@@ -128,7 +128,7 @@ io.on("connection", function (socket) {
     const room_id = join_lobby(Lobbies, difficulty, socket);
     socket.join(room_id);
     Socket_list.set(socket.id,room_id);
-    username_list.set(socket_id,user);
+    username_list.set(socket.id,user);
     let x=0;
     for(let i=0;i<Lobbies[difficulty].length;i++){
       if(Lobbies[difficulty].lobbie_id===room_id){
